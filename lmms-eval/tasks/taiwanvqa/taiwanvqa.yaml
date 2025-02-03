@@ -1,0 +1,36 @@
+dataset_path: hhhuang/TaiwanVQA
+dataset_name: data
+dataset_kwargs:
+  token: True
+task: "taiwanvqa"
+test_split: test
+output_type: generate_until
+doc_to_visual: !function utils.taiwanvqa_doc_to_visual
+doc_to_text: !function utils.taiwanvqa_doc_to_text
+doc_to_target: "answer"
+process_results: !function utils.taiwanvqa_process_results
+metric_list:
+  - metric: gpt_eval_score
+    aggregation: !function utils.taiwanvqa_aggregate_results_eval
+    higher_is_better: true
+  - metric: submission
+    aggregation: !function utils.taiwanvqa_aggregate_results_submission
+    higher_is_better: true
+lmms_eval_specific_kwargs:
+  default:
+    pre_prompt: ""
+    post_prompt: "\n請直接使用所提供的選項字母作為答案回答。"
+model_specific_generation_kwargs:
+  llava:
+    image_aspect_ratio: original
+generation_kwargs:
+  until:
+    - "ASSISTANT:"
+  max_new_tokens: 1
+  temperature: 0
+  top_p: 1.0
+  num_beams: 1
+  do_sample: false
+metadata:
+  version: 0.0
+  sys_prompt: "有以下幾個選項："
